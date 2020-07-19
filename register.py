@@ -6,7 +6,7 @@ from main import User
 import os
 
 
-def create_account(username, name, surname, password, repeat_password):
+def create_account(username, name, surname, password, repeat_password, tk_root):
     if password.get() != repeat_password.get():
         print("Not matching passwords")
         return
@@ -18,6 +18,7 @@ def create_account(username, name, surname, password, repeat_password):
     all_users.append(main.User(username.get(), name.get(), surname.get(), password.get()))
     pickle.dump(all_users, open('./users.obj', 'wb'))
     print("Account created successfully")
+    tk_root.quit()
 
 
 root = tk.Tk()
@@ -46,7 +47,7 @@ repeat_password_entry = tk.Entry(root, textvariable=repeat_password_str, show='*
 
 
 create_account_partial = functools.partial(create_account,
-                                           username_str, name_str, surname_str, password_str, repeat_password_str)
+                                           username_str, name_str, surname_str, password_str, repeat_password_str, root)
 
 login_btn = tk.Button(root, text="Create Account", command=create_account_partial).grid(row=5, column=0)
 quit_btn = tk.Button(root, text="Quit", command=root.quit).grid(row=5, column=2)
