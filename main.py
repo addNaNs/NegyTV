@@ -137,14 +137,11 @@ class User:
 
 if __name__ == '__main__':
     trained_model = pickle.load(open('gym.obj', 'rb'))
-    all_users = None
     try:
-        all_users = pickle.load(open('./users.obj', 'rb'))
+        pickle.load(open('./users.obj', 'rb'))
     except FileNotFoundError:
         all_users = list()
-
-    print(all_users)
-    pickle.dump(all_users, open('./users.obj', 'wb'))
+        pickle.dump(all_users, open('./users.obj', 'wb'))
 
     import login as login
     print(login.index)
