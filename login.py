@@ -38,7 +38,7 @@ password_entry = tk.Entry(root, textvariable=password_str, show='*').grid(row=1,
 validate_login_partial = functools.partial(validate_login, username_str, password_str)
 
 login_btn = tk.Button(root, text="Login", command=validate_login_partial).grid(row=4, column=0)
-login_btn = tk.Button(root, text="Register", command=register).grid(row=4, column=1)
-login_btn = tk.Button(root, text="Quit", command=quit).grid(row=4, column=2)
+register_btn = tk.Button(root, text="Register", command=register).grid(row=4, column=1)
+quit_btn = tk.Button(root, text="Quit", command=quit).grid(row=4, column=2)
 
 root.mainloop()

@@ -145,7 +145,7 @@ if __name__ == '__main__':
 
     import login as login
     print(login.index)
-    print("HI!")
+    print(len(pickle.load(open('users.obj', 'rb'))))
 
 
 

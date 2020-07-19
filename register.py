@@ -1,10 +1,23 @@
 import tkinter as tk
-import main
 import pickle
 import functools
+import main
+from main import User
+import os
+
 
 def create_account(username, name, surname, password, repeat_password):
-    pass
+    if password.get() != repeat_password.get():
+        print("Not matching passwords")
+        return
+    all_users = pickle.load(open('./users.obj', 'rb'))
+    for i, user in enumerate(all_users):
+        if user.username == username.get():
+            print("Username is taken")
+            return
+    all_users.append(main.User(username.get(), name.get(), surname.get(), password.get()))
+    pickle.dump(all_users, open('./users.obj', 'wb'))
+    print("Account created successfully")
 
 
 root = tk.Tk()
@@ -36,6 +49,6 @@ create_account_partial = functools.partial(create_account,
                                            username_str, name_str, surname_str, password_str, repeat_password_str)
 
 login_btn = tk.Button(root, text="Create Account", command=create_account_partial).grid(row=5, column=0)
-login_btn = tk.Button(root, text="Quit", command=root.quit).grid(row=5, column=2)
+quit_btn = tk.Button(root, text="Quit", command=root.quit).grid(row=5, column=2)
 
 root.mainloop()
