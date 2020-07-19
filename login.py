@@ -1,40 +1,37 @@
 import tkinter as tk
 import main
 import pickle
+import functools
 
-all_users = None
-try:
+index = None
+
+
+def validate_login(username, password):
+    global index
+    print("username entered :", username.get())
+    print("password entered :", password.get())
     all_users = pickle.load(open('./users.obj', 'rb'))
-except FileNotFoundError:
-    all_users = list()
-print(all_users)
+    for i, user in enumerate(all_users):
+        if user.validate(username.get(), password.get()):
+            index = i
+            return i
+    return None
 
-root = tk.Tk(className="Please log in or register")
-root.geometry("640x420")
 
-frame1 = tk.Frame(root)
-frame1.pack()
+root = tk.Tk()
+root.geometry('400x150')
+root.title('Please login or register')
 
-login_btn = tk.Button(frame1,
-                      text="LOGIN",
-                      command=quit)
-login_btn.pack(side=tk.LEFT)
+username_label = tk.Label(root, text="Username").grid(row=0, column=0)
+username_str = tk.StringVar()
+username_entry = tk.Entry(root, textvariable=username_str).grid(row=0, column=1)
 
-register_btn = tk.Button(frame1,
-                         text="REGISTER",
-                         command=quit)
-register_btn.pack(side=tk.LEFT)
+password_label = tk.Label(root, text="Password").grid(row=1, column=0)
+password_str = tk.StringVar()
+password_entry = tk.Entry(root, textvariable=password_str, show='*').grid(row=1, column=1)
 
-quit_btn = tk.Button(frame1,
-                     text="QUIT",
-                     fg="red",
-                     command=root.quit)
-quit_btn.pack(side=tk.LEFT)
+validate_login_partial = functools.partial(validate_login, username_str, password_str)
 
-e1 = tk.Entry(frame1).pack()
-e2 = tk.Entry(frame1).pack()
-
+login_btn = tk.Button(root, text="Login", command=validate_login_partial).grid(row=4, column=0)
 
 root.mainloop()
-
-index = 5

@@ -131,6 +131,9 @@ class User:
         self.__password__ = password
         self.ratings = ratings
 
+    def validate(self, username, password):
+        return username == self.username and password == self.__password__
+
 
 if __name__ == '__main__':
     trained_model = pickle.load(open('gym.obj', 'rb'))
@@ -140,6 +143,7 @@ if __name__ == '__main__':
     except FileNotFoundError:
         all_users = list()
 
+    print(all_users)
     pickle.dump(all_users, open('./users.obj', 'wb'))
 
     import login as login
