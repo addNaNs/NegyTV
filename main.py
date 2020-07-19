@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
-import tkinter
+import tkinter as tk
 
 
 class Gym:
@@ -147,6 +147,4 @@ if __name__ == '__main__':
     print(login.index)
     print(len(pickle.load(open('users.obj', 'rb'))))
 
-
-
-
+    all_users = pickle.load(open('./users.obj', 'rb'))

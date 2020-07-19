@@ -7,7 +7,7 @@ import os
 index = None
 
 
-def validate_login(username, password):
+def validate_login(username, password, tk_root):
     global index
     print("username entered :", username.get())
     print("password entered :", password.get())
@@ -15,7 +15,10 @@ def validate_login(username, password):
     for i, user in enumerate(all_users):
         if user.validate(username.get(), password.get()):
             index = i
+            tk.messagebox.showinfo(title='Hello', message='Hello ' + user.name)
+            tk_root.quit()
             return i
+    tk.messagebox.showwarning(title='Bad input', message='Wrong credentials')
     return None
 
 
@@ -35,7 +38,7 @@ password_label = tk.Label(root, text="Password").grid(row=1, column=0)
 password_str = tk.StringVar()
 password_entry = tk.Entry(root, textvariable=password_str, show='*').grid(row=1, column=1)
 
-validate_login_partial = functools.partial(validate_login, username_str, password_str)
+validate_login_partial = functools.partial(validate_login, username_str, password_str, root)
 
 login_btn = tk.Button(root, text="Login", command=validate_login_partial).grid(row=4, column=0)
 register_btn = tk.Button(root, text="Register", command=register).grid(row=4, column=1)
