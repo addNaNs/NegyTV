@@ -148,6 +148,11 @@ class User:
     def set_ratings(self, new_ratings):
         self.ratings = new_ratings
 
+    def total_has_rated(self):
+        if self.ratings is None:
+            return 0
+        return np.sign(self.ratings).sum()
+
     def __str__(self):
         return 'Username: ' + self.username + ', Name: ' + self.name + ' ' + self.surname
 
@@ -173,7 +178,9 @@ if __name__ == '__main__':
     # print(trained_model.most_viewed())
     # print(trained_model.recommend(user))
 
-    import new_account_setup
+    if user.total_has_rated() == 0:
+        import new_account_setup as nas
+        print(nas.setup_ratings)
 
     root = tk.Tk()
     root.geometry('400x150')
