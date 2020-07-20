@@ -96,7 +96,7 @@ class Gym:
         plt.plot(range(epochs + 1), costs)
 
     def predict(self, sur, num_it=500):
-        suf = np.random.randn(1, self.num_features)
+        suf = np.zeros((1, self.num_features))
         suhr = np.sign(sur)
         sutrm = suhr.sum()
         sur = sur - self.mean_ratings * suhr
@@ -118,6 +118,11 @@ class Gym:
         recommends = list(zip(self.titles, preds, suhr))
         recommends.sort(key=lambda arg: -arg[1])
         return recommends
+
+    def most_viewed(self):
+        vies_list = list(zip(self.titles, self.moviewise_rated_movies))
+        vies_list.sort(key=lambda arg: -arg[1])
+        return vies_list
 
     def say(self, s):
         print(s)
@@ -157,31 +162,22 @@ if __name__ == '__main__':
 
     import login as login
 
-    print(login.index)
-    print(len(pickle.load(open('users.obj', 'rb'))))
-    trained_model.say('Hello there, General Kenobi')
+    # print(login.index)
+    # print(len(pickle.load(open('users.obj', 'rb'))))
+    # trained_model.say('Hello there, General Kenobi')
 
     all_users = pickle.load(open('./users.obj', 'rb'))
     user = all_users[login.index]
     print(user)
-    trained_model.recommend(user)
 
-    '''root = tk.Tk()
+    # print(trained_model.most_viewed())
+    # print(trained_model.recommend(user))
+
+    root = tk.Tk()
     root.geometry('400x150')
-    root.title('Please login or register')
+    root.title('NegyTV')
 
-    username_label = tk.Label(root, text="Username").grid(row=0, column=0)
-    username_str = tk.StringVar()
-    username_entry = tk.Entry(root, textvariable=username_str).grid(row=0, column=1)
+    welcome_label = tk.Label(root, text=("Welcome "+user.name+" to NegyTV")).grid(row=0, column=0)
 
-    password_label = tk.Label(root, text="Password").grid(row=1, column=0)
-    password_str = tk.StringVar()
-    password_entry = tk.Entry(root, textvariable=password_str, show='*').grid(row=1, column=1)
 
-    validate_login_partial = functools.partial(validate_login, username_str, password_str, root)
-
-    login_btn = tk.Button(root, text="Login", command=validate_login_partial).grid(row=4, column=0)
-    register_btn = tk.Button(root, text="Register", command=register).grid(row=4, column=1)
-    quit_btn = tk.Button(root, text="Quit", command=quit).grid(row=4, column=2)
-
-    root.mainloop()'''
+    root.mainloop()

@@ -15,8 +15,8 @@ def validate_login(username, password, tk_root):
     for i, user in enumerate(all_users):
         if user.validate(username.get(), password.get()):
             index = i
-            tk.messagebox.showinfo(title='Hello', message='Hello ' + user.name)
             tk_root.quit()
+            tk.messagebox.showinfo(title='Hello', message='Hello ' + user.name)
             return i
     tk.messagebox.showwarning(title='Bad input', message='Wrong credentials')
     return None
