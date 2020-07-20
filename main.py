@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
 import tkinter as tk
+import functools
 
 
 class Gym:
@@ -58,7 +59,7 @@ class Gym:
 
     def get_cost_elementwise(self):
         return (((self.user_features.dot(self.movie_features.T) - self.ratings)
-                 * self.has_rated) ** 2 / (self.total_rated_movies) * 2)
+                 * self.has_rated) ** 2 / self.total_rated_movies * 2)
 
     def get_cost(self):
         return self.get_cost_elementwise().sum()
@@ -103,18 +104,23 @@ class Gym:
             sufg = ((suf.dot(self.movie_features.T) * suhr - sur)
                     * suhr).dot(self.movie_features)
             suf = suf - sufg * 0.0015
-            if i % 50 == 0:
-                print((((suf.dot(self.movie_features.T) - sur)
-                        * suhr) ** 2 / (sutrm) * 2).sum())
+            if i % 500 == 0:
+                print(i, (((suf.dot(self.movie_features.T) - sur)
+                           * suhr) ** 2 / np.clip(sutrm, a_min=1, a_max=5) * 2).sum())
         return suf.dot(self.movie_features.T) + self.mean_ratings
 
     def recommend(self, user):
+        if user.ratings is None:
+            user.set_ratings(np.zeros(self.num_movies))
         sur = user.ratings
         preds = list(self.predict(sur, 5000).flatten())
         suhr = list(np.sign(sur))
         recommends = list(zip(self.titles, preds, suhr))
         recommends.sort(key=lambda arg: -arg[1])
         return recommends
+
+    def say(self, s):
+        print(s)
 
 
 class User:
@@ -134,6 +140,12 @@ class User:
     def validate(self, username, password):
         return username == self.username and password == self.__password__
 
+    def set_ratings(self, new_ratings):
+        self.ratings = new_ratings
+
+    def __str__(self):
+        return 'Username: ' + self.username + ', Name: ' + self.name + ' ' + self.surname
+
 
 if __name__ == '__main__':
     trained_model = pickle.load(open('gym.obj', 'rb'))
@@ -144,7 +156,32 @@ if __name__ == '__main__':
         pickle.dump(all_users, open('./users.obj', 'wb'))
 
     import login as login
+
     print(login.index)
     print(len(pickle.load(open('users.obj', 'rb'))))
+    trained_model.say('Hello there, General Kenobi')
 
     all_users = pickle.load(open('./users.obj', 'rb'))
+    user = all_users[login.index]
+    print(user)
+    trained_model.recommend(user)
+
+    '''root = tk.Tk()
+    root.geometry('400x150')
+    root.title('Please login or register')
+
+    username_label = tk.Label(root, text="Username").grid(row=0, column=0)
+    username_str = tk.StringVar()
+    username_entry = tk.Entry(root, textvariable=username_str).grid(row=0, column=1)
+
+    password_label = tk.Label(root, text="Password").grid(row=1, column=0)
+    password_str = tk.StringVar()
+    password_entry = tk.Entry(root, textvariable=password_str, show='*').grid(row=1, column=1)
+
+    validate_login_partial = functools.partial(validate_login, username_str, password_str, root)
+
+    login_btn = tk.Button(root, text="Login", command=validate_login_partial).grid(row=4, column=0)
+    register_btn = tk.Button(root, text="Register", command=register).grid(row=4, column=1)
+    quit_btn = tk.Button(root, text="Quit", command=quit).grid(row=4, column=2)
+
+    root.mainloop()'''
