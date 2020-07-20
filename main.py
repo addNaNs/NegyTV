@@ -120,8 +120,8 @@ class Gym:
         return recommends
 
     def most_viewed(self):
-        vies_list = list(zip(self.titles, self.moviewise_rated_movies))
-        vies_list.sort(key=lambda arg: -arg[1])
+        vies_list = list(zip(range(self.num_movies), self.titles, self.moviewise_rated_movies))
+        vies_list.sort(key=lambda arg: -arg[2])
         return vies_list
 
     def say(self, s):
@@ -173,11 +173,12 @@ if __name__ == '__main__':
     # print(trained_model.most_viewed())
     # print(trained_model.recommend(user))
 
+    import new_account_setup
+
     root = tk.Tk()
     root.geometry('400x150')
     root.title('NegyTV')
 
     welcome_label = tk.Label(root, text=("Welcome "+user.name+" to NegyTV")).grid(row=0, column=0)
-
 
     root.mainloop()
