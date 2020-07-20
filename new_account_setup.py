@@ -57,5 +57,6 @@ rate_3_star_btn = tk.Button(root, text='3 star', command=rate_3_partial).grid(ro
 rate_4_star_btn = tk.Button(root, text='4 star', command=rate_4_partial).grid(row=4, column=3)
 rate_5_star_btn = tk.Button(root, text='5 star', command=rate_5_partial).grid(row=4, column=4)
 not_watched_btn = tk.Button(root, text='Did not watch', command=not_watched_partial).grid(row=4, column=5)
+done_btn = tk.Button(root, text='Done', command=root.quit).grid(row=5, column=0)
 
 root.mainloop()

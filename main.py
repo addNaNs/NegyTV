@@ -115,8 +115,8 @@ class Gym:
         sur = user.ratings
         preds = list(self.predict(sur, 5000).flatten())
         suhr = list(np.sign(sur))
-        recommends = list(zip(self.titles, preds, suhr))
-        recommends.sort(key=lambda arg: -arg[1])
+        recommends = list(zip(range(self.num_movies), self.titles, preds, suhr))
+        recommends.sort(key=lambda arg: -arg[2])
         return recommends
 
     def most_viewed(self):
@@ -157,6 +157,26 @@ class User:
         return 'Username: ' + self.username + ', Name: ' + self.name + ' ' + self.surname
 
 
+def not_watched(text_var):
+    next_movie(text_var)
+
+
+def next_movie(text_var):
+    global movie_index
+    global recommended
+    movie_index += 1
+    text_var.set(recommended[movie_index][1])
+    print(recommended[movie_index][1])
+
+
+def rate(text_var, stars):
+    global user
+    global recommended
+    global movie_index
+    user.ratings[recommended[movie_index][0]] = stars
+    next_movie(text_var)
+
+
 if __name__ == '__main__':
     trained_model = pickle.load(open('gym.obj', 'rb'))
     try:
@@ -180,12 +200,41 @@ if __name__ == '__main__':
 
     if user.total_has_rated() == 0:
         import new_account_setup as nas
-        print(nas.setup_ratings)
+        user.set_ratings(nas.setup_ratings)
 
     root = tk.Tk()
-    root.geometry('400x150')
     root.title('NegyTV')
 
     welcome_label = tk.Label(root, text=("Welcome "+user.name+" to NegyTV")).grid(row=0, column=0)
+    setup_welcome_string = "We recommend movies that we think you will like based on your previous ratings"
+    setup_welcome_label = tk.Label(root, text=setup_welcome_string).grid(row=0, column=0, columnspan=6)
+
+    setup_instructions_string = "How about watching: "
+    setup_instructions_label = tk.Label(root, text=setup_instructions_string).grid(row=1, column=0, columnspan=6)
+
+    recommended = trained_model.recommend(user)
+
+    movie_index = -1
+    movie_str = tk.StringVar(root, "If you're seeing this, there's an error")
+    next_movie(movie_str)
+    movie_label = tk.Label(root, textvariable=movie_str).grid(row=2, column=0, columnspan=6)
+
+    not_watched_partial = functools.partial(not_watched, movie_str)
+    rate_1_partial = functools.partial(rate, movie_str, 1)
+    rate_2_partial = functools.partial(rate, movie_str, 2)
+    rate_3_partial = functools.partial(rate, movie_str, 3)
+    rate_4_partial = functools.partial(rate, movie_str, 4)
+    rate_5_partial = functools.partial(rate, movie_str, 5)
+
+    rate_1_star_btn = tk.Button(root, text='1 star', command=rate_1_partial).grid(row=4, column=0)
+    rate_2_star_btn = tk.Button(root, text='2 star', command=rate_2_partial).grid(row=4, column=1)
+    rate_3_star_btn = tk.Button(root, text='3 star', command=rate_3_partial).grid(row=4, column=2)
+    rate_4_star_btn = tk.Button(root, text='4 star', command=rate_4_partial).grid(row=4, column=3)
+    rate_5_star_btn = tk.Button(root, text='5 star', command=rate_5_partial).grid(row=4, column=4)
+    not_watched_btn = tk.Button(root, text='Did not watch', command=not_watched_partial).grid(row=4, column=5)
+    done_btn = tk.Button(root, text='Quit', command=root.quit).grid(row=5, column=0)
 
     root.mainloop()
+
+    all_users[login.index] = user
+    pickle.dump(all_users, open('./users.obj', 'wb'))
